@@ -1,0 +1,50 @@
+{
+  "name": "inteviews-system-api",
+  "version": "1.0.0",
+  "description": "A system for registering users' info ",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node -r tsconfig-paths/register ./src/main.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register ./src/main.ts",
+    "test": "jest --runInBand"
+  },
+  "author": "Stathis Ioannidis",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "@types/uuid": "^8.3.1",
+    "apollo-server-koa": "^3.5.0",
+    "class-validator": "^0.13.1",
+    "dotenv": "^10.0.0",
+    "graphql": "^15.7.2",
+    "jwks-rsa": "^2.0.5",
+    "knex": "^0.95.14",
+    "koa": "^2.13.4",
+    "koa-jwt": "^4.0.3",
+    "mysql": "^2.18.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/graphql": "^14.5.0",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
+    "eslint": "^7.32.0",
+    "eslint-config-standard-with-typescript": "^21.0.1",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-jest": "^25.2.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.1",
+    "eslint-plugin-standard": "^5.0.0",
+    "jest": "^27.3.1",
+    "ts-jest": "^27.0.7",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "tsconfig-paths": "^3.11.0",
+    "tslint": "^6.1.3",
+    "typescript": "^4.4.4"
+  }
+}
