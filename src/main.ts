@@ -14,6 +14,7 @@ import { CustomContext } from './types/interfaces/CustomContext'
 import { connection } from 'src/dependencies/knex'
 
 import { CoreResolver } from './lib/resolvers/CoreResolver'
+import { InterviewsResolver } from './lib/resolvers/InterviewsResolver'
 
 async function main (): Promise<void> {
   console.log(`ENVIRONMENT: ${ENVIRONMENT}`)
@@ -21,7 +22,7 @@ async function main (): Promise<void> {
 
   console.log('=== BUILDING GQL SCHEMA ===')
   const schema = await buildSchema({
-    resolvers: [CoreResolver]
+    resolvers: [CoreResolver, InterviewsResolver]
 
   })
 

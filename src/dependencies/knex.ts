@@ -1,4 +1,11 @@
 import knex from 'knex'
+import { InterviewsRow } from 'src/types/interfaces/Rows/InterviewsRow'
+
+declare module 'knex/types/tables' {
+  interface Tables {
+    interviews: InterviewsRow
+  }
+}
 
 export const connection = knex({
   client: 'mysql',
