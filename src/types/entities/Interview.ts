@@ -45,15 +45,15 @@ export class Interview {
   @Field()
   shifts: number
 
-  @Field()
-  comments: [string]
+  @Field(() => [String], { nullable: true })
+  comments: string[]
 
-  @Field()
-  toStore: [string]
+  @Field(() => [String], { nullable: true })
+  toStore: string[]
 
-  @Field()
+  @Field({ nullable: true })
   result: string
 
   @Field()
-  bio: Text
+  bio: string
 }

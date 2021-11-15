@@ -61,13 +61,11 @@ export class InterviewInputData {
   @Max(7)
   shifts: number
 
-  @Field()
-  @IsString()
-  comments: [string]
+  @Field(() => [String], { nullable: true })
+  comments: string[]
 
-  @Field()
-  @IsString()
-  toStore: [string]
+  @Field(() => [String], { nullable: true })
+  toStore: string[]
 
   @Field({ nullable: true })
   @IsString()
