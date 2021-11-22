@@ -2,10 +2,20 @@ import { Ctx, Arg, Query, Resolver, Mutation } from 'type-graphql'
 import { Knex } from 'knex'
 import { InterviewInputData } from 'src/types/classes/InterviewInputData'
 import { Interview } from 'src/types/entities/Interview'
-import { createInterviewAction, deleteInterviewAction, getInterviewAction, getInterviewsAction, getNullResults, updateInterviewAction } from '../actions/InterviewsActions'
+import { createInterviewAction, deleteInterviewAction, getInterviewAction, getInterviewsAction, getNullResults, getPaginatedInterviewsAction, updateInterviewAction } from '../actions/InterviewsActions'
+import { PaginationInputData } from 'src/types/classes/PaginationInputData'
+import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
 
 @Resolver()
 export class InterviewsResolver {
+  @Query(() => PaginatedInterviews)
+  async getPaginatedInterviews (
+    @Ctx('knex') knex: Knex,
+      @Arg('data', () => PaginationInputData) data: PaginationInputData
+  ): Promise<PaginatedInterviews> {
+    return await getPaginatedInterviewsAction(data, knex)
+  }
+
   @Query(() => [Interview])
   async getAllInterviews (
     @Ctx('knex') knex: Knex

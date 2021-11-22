@@ -8,6 +8,7 @@ import { ApolloServer } from 'apollo-server-koa'
 import { buildSchema } from 'type-graphql'
 
 import { ENVIRONMENT, HOST, PORT } from './dependencies/config'
+// import { jwt } from './middlewares/Authentication'
 
 import { CustomContext } from './types/interfaces/CustomContext'
 
@@ -46,6 +47,7 @@ async function main (): Promise<void> {
   await apolloServer.start()
 
   app.use(cors())
+  // .use(jwt)
   app.use(apolloServer.getMiddleware({ cors: false }))
 
   const httpServer = createServer(app.callback())
