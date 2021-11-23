@@ -8,4 +8,7 @@ export class PaginatedInterviews {
 
   @Field()
   total: number
+
+  @Field()
+  offset: number
 }

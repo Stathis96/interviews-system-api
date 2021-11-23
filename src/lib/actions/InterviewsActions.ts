@@ -22,7 +22,7 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
     }
   })
 
-  return { context: prepared, total: numberOfInterviews[0].count as number }
+  return { context: prepared, total: numberOfInterviews[0].count as number, offset }
 }
 
 export async function getInterviewsAction (connection: Knex): Promise<Interview[]> {
