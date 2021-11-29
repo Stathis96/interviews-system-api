@@ -67,7 +67,7 @@ export class InterviewInputData {
   @Field(() => [String], { nullable: true })
   toStore: string[]
 
-  @Field({ nullable: true })
+  @Field({ defaultValue: null, nullable: true })
   @IsString()
   result: string
 

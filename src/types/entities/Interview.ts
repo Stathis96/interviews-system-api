@@ -51,7 +51,7 @@ export class Interview {
   @Field(() => [String], { nullable: true })
   toStore: string[]
 
-  @Field({ nullable: true })
+  @Field({ defaultValue: null, nullable: true })
   result: string
 
   @Field()
