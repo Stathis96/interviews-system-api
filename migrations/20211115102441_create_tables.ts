@@ -20,7 +20,7 @@ export async function up (knex: Knex): Promise<void> {
       table.integer('shifts')
       table.string('comments')
       table.string('toStore')
-      table.string('result')
+      table.string('result').defaultTo(null)
       table.string('bio')
     })
 }
