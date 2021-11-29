@@ -1,18 +1,23 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { UserInputError } from 'apollo-server-errors'
 import { Knex } from 'knex'
 import { InterviewInputData } from 'src/types/classes/InterviewInputData'
 import { PaginationInputData } from 'src/types/classes/PaginationInputData'
-// import { PaginationInputData } from 'src/types/classes/PaginationInputData'
 import { Interview } from 'src/types/entities/Interview'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
 import { v4 } from 'uuid'
 
 export async function getPaginatedInterviewsAction (data: PaginationInputData, connection: Knex): Promise<PaginatedInterviews> {
   const offset = (data.page - 1) * data.limit
-  // if (data.filter === undefined) data.filter = ''
+  if (data.filter === undefined) data.filter = ''
   const numberOfInterviews = await connection('interviews').count({ count: '*' })
 
   const interviews = await connection('interviews').limit(data.limit).offset(offset)
+    .where('firstName', 'like', `%${(data.filter)}%`)
+    .orWhere('lastName', 'like', `%${(data.filter)}%`)
+    .orWhere('toStore', 'like', `%${(data.filter)}%`)
+    .orWhere('comments', 'like', `%${(data.filter)}%`)
+    .orWhere('result', 'like', `%${(data.filter)}%`)
 
   const prepared = interviews.map(interview => {
     return {
