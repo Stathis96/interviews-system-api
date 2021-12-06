@@ -6,6 +6,7 @@ import { PaginationInputData } from 'src/types/classes/PaginationInputData'
 import { Interview } from 'src/types/entities/Interview'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
 import { v4 } from 'uuid'
+import { uploadFileAction } from './FileActions'
 
 export async function getPaginatedInterviewsAction (data: PaginationInputData, connection: Knex): Promise<PaginatedInterviews> {
   const offset = (data.page - 1) * data.limit
@@ -24,7 +25,7 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
       ...interview,
       comments: JSON.parse(interview.comments),
       toStore: JSON.parse(interview.toStore),
-      bio: { path: '', name: 'sth' }
+      bio: { path: 'hey', name: 'sth' }
     }
   })
 
@@ -106,11 +107,13 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
   if (interview === undefined) {
     throw new Error('Interview not found')
   }
+  const encodedfile = 'YBcmbtVPkr+JkSHhQbHQMU0uXMMpVcAQjqq4mya4bNJgxB'
+  const bio = await uploadFileAction(id, encodedfile, connection)
   return {
     ...interview,
     comments: JSON.parse(interview.comments),
     toStore: JSON.parse(interview.toStore),
-    bio: { path: '', name: 'sth' }
+    bio: bio
   }
 }
 
