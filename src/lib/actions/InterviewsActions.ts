@@ -23,7 +23,8 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore)
+      toStore: JSON.parse(interview.toStore),
+      bio: { path: '', name: 'sth' }
     }
   })
 
@@ -37,7 +38,8 @@ export async function getInterviewsAction (connection: Knex): Promise<Interview[
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore)
+      toStore: JSON.parse(interview.toStore),
+      bio: { path: 'sth', name: 'sth' }
     }
   })
   return prepared
@@ -51,7 +53,8 @@ export async function getInterviewAction (id: string, connection: Knex): Promise
   const result: Interview = {
     ...interview,
     comments: JSON.parse(interview.comments),
-    toStore: JSON.parse(interview.toStore)
+    toStore: JSON.parse(interview.toStore),
+    bio: { path: '', name: 'sth' }
   }
   return result
 }
@@ -63,7 +66,8 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore)
+      toStore: JSON.parse(interview.toStore),
+      bio: { path: '', name: 'sth' }
     }
   })
   return interviewsWithNull
@@ -86,7 +90,8 @@ export async function createInterviewAction (data: InterviewInputData, connectio
   const result: Interview = {
     ...interview,
     comments: JSON.parse(interview.comments),
-    toStore: JSON.parse(interview.toStore)
+    toStore: JSON.parse(interview.toStore),
+    bio: { path: '', name: 'sth' }
   }
   return result
 }
@@ -101,7 +106,12 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
   if (interview === undefined) {
     throw new Error('Interview not found')
   }
-  return { ...interview, comments: JSON.parse(interview.comments), toStore: JSON.parse(interview.toStore) }
+  return {
+    ...interview,
+    comments: JSON.parse(interview.comments),
+    toStore: JSON.parse(interview.toStore),
+    bio: { path: '', name: 'sth' }
+  }
 }
 
 export async function deleteInterviewAction (id: string, connection: Knex): Promise<boolean> {
