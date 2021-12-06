@@ -1,6 +1,9 @@
 import { Field, ID, ObjectType } from 'type-graphql'
 import { v4 } from 'uuid'
 
+import { GraphQLJSONObject } from 'graphql-type-json'
+import { PdfFile } from './PdfFile'
+
 @ObjectType()
 export class Interview {
   @Field(() => ID)
@@ -54,6 +57,6 @@ export class Interview {
   @Field({ defaultValue: null, nullable: true })
   result: string
 
-  @Field()
-  bio: string
+  @Field(() => GraphQLJSONObject)
+  bio: PdfFile
 }
