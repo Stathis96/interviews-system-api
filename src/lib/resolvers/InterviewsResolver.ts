@@ -1,3 +1,7 @@
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable node/no-path-concat */
+/* eslint-disable no-async-promise-executor */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { Ctx, Arg, Query, Resolver, Mutation } from 'type-graphql'
 import { Knex } from 'knex'
 import { InterviewInputData } from 'src/types/classes/InterviewInputData'
@@ -5,6 +9,11 @@ import { Interview } from 'src/types/entities/Interview'
 import { createInterviewAction, deleteInterviewAction, getInterviewAction, getInterviewsAction, getNullResults, getPaginatedInterviewsAction, updateInterviewAction } from '../actions/InterviewsActions'
 import { PaginationInputData } from 'src/types/classes/PaginationInputData'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
+
+// import { GraphQLUpload } from 'graphql-upload'
+// import { createWriteStream } from 'fs'
+
+// import { Upload } from '../../types/Upload'
 
 @Resolver()
 export class InterviewsResolver {
@@ -63,3 +72,20 @@ export class InterviewsResolver {
     return await deleteInterviewAction(id, knex)
   }
 }
+
+// @Resolver()
+// export class ProfilePictureResolver {
+//   @Mutation(() => Boolean)
+//   async addProfilePicture (@Arg('picture', () => GraphQLUpload)
+//     {
+//       createReadStream,
+//       filename
+//     }: Upload): Promise<boolean> {
+//     return await new Promise(async (resolve, reject) =>
+//       createReadStream()
+//         .pipe(createWriteStream(__dirname + `/../../../utils/${filename}`))
+//         .on('finish', () => resolve(true))
+//         .on('error', () => reject(false))
+//     )
+//   }
+// }
