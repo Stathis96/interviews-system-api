@@ -1,3 +1,5 @@
+import { PdfFile } from 'src/types/entities/PdfFile'
+
 export interface InterviewsRow {
   interviewId: string
 
@@ -33,5 +35,5 @@ export interface InterviewsRow {
 
   result: string
 
-  bio: string
+  bio: PdfFile
 }

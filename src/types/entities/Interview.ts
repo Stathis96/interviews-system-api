@@ -57,6 +57,6 @@ export class Interview {
   @Field({ defaultValue: null, nullable: true })
   result: string
 
-  @Field(() => GraphQLJSONObject)
+  @Field(() => GraphQLJSONObject, { nullable: true })
   bio: PdfFile
 }

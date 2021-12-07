@@ -73,5 +73,5 @@ export class InterviewInputData {
 
   @Field()
   @IsString()
-  bio: string
+  bio?: string
 }
