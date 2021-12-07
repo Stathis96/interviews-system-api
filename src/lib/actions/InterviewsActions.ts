@@ -5,6 +5,7 @@ import { InterviewInputData } from 'src/types/classes/InterviewInputData'
 import { PaginationInputData } from 'src/types/classes/PaginationInputData'
 import { Interview } from 'src/types/entities/Interview'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
+import { PdfFile } from 'src/types/entities/PdfFile'
 import { v4 } from 'uuid'
 import { uploadFileAction } from './FileActions'
 
@@ -24,8 +25,7 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore),
-      bio: { path: 'hey', name: 'sth' }
+      toStore: JSON.parse(interview.toStore)
     }
   })
 
@@ -39,8 +39,7 @@ export async function getInterviewsAction (connection: Knex): Promise<Interview[
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore),
-      bio: { path: 'sth', name: 'sth' }
+      toStore: JSON.parse(interview.toStore)
     }
   })
   return prepared
@@ -54,8 +53,7 @@ export async function getInterviewAction (id: string, connection: Knex): Promise
   const result: Interview = {
     ...interview,
     comments: JSON.parse(interview.comments),
-    toStore: JSON.parse(interview.toStore),
-    bio: { path: '', name: 'sth' }
+    toStore: JSON.parse(interview.toStore)
   }
   return result
 }
@@ -67,8 +65,7 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore),
-      bio: { path: '', name: 'sth' }
+      toStore: JSON.parse(interview.toStore)
     }
   })
   return interviewsWithNull
@@ -76,12 +73,24 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
 
 export async function createInterviewAction (data: InterviewInputData, connection: Knex): Promise<Interview> {
   const id = v4()
+  let bio: PdfFile = { name: '', path: '' }
+  console.log('show data.bio', data.bio)
+  if (data.bio !== undefined) {
+    console.log('mpika sto if, des to data.bio', data.bio)
+    for (const attachedFile of data.bio) {
+      bio = await uploadFileAction(id, attachedFile, connection)
+      console.log('after uploading', bio)
+    }
+  }
+  console.log('des to bio ', bio)
+
   await connection('interviews')
     .insert({
       interviewId: id,
       ...data,
       comments: JSON.stringify(data.comments), // stringify
-      toStore: JSON.stringify(data.toStore) // stringify
+      toStore: JSON.stringify(data.toStore), // stringify
+      bio: bio
     })
 
   const interview = await connection('interviews').where('interviewId', id).first()
@@ -92,23 +101,31 @@ export async function createInterviewAction (data: InterviewInputData, connectio
     ...interview,
     comments: JSON.parse(interview.comments),
     toStore: JSON.parse(interview.toStore),
-    bio: { path: '', name: 'sth' }
+    bio: bio
   }
   return result
 }
 
 export async function updateInterviewAction (id: string, data: InterviewInputData, connection: Knex): Promise<Interview> {
+  let bio: PdfFile = { name: '', path: '' }
+
+  if (data.bio) {
+    for (const attachedFile of data.bio) {
+      bio = await uploadFileAction(id, attachedFile, connection)
+    }
+  }
+  console.log('des to bio ', bio)
+
   await connection('interviews').where('interviewId', id).update({
     ...data,
     comments: JSON.stringify(data.comments), // stringify
-    toStore: JSON.stringify(data.toStore) // stringify
+    toStore: JSON.stringify(data.toStore), // stringify
+    bio: bio
   })
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) {
     throw new Error('Interview not found')
   }
-  const encodedfile = 'YBcmbtVPkr+JkSHhQbHQMU0uXMMpVcAQjqq4mya4bNJgxB'
-  const bio = await uploadFileAction(id, encodedfile, connection)
   return {
     ...interview,
     comments: JSON.parse(interview.comments),
