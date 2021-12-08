@@ -58,5 +58,5 @@ export class Interview {
   result: string
 
   @Field(() => GraphQLJSONObject, { nullable: true })
-  bio: PdfFile
+  bio?: PdfFile
 }
