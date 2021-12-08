@@ -17,33 +17,11 @@ export async function uploadFileAction (id: string, file: string, connection: Kn
   })
 
   const base64File = file.split(';base64,').pop()
-  if (!base64File) throw new Error('Nofile') // check for as not to be undefined.
+  if (!base64File) throw new Error('No file got encrypted') // check for as not to be undefined.
+  Buffer.from(base64File, 'base64')
 
   await fsPromise.writeFile(`${filepath}/${interview.interviewId}.pdf`, base64File, { encoding: 'base64' }).catch(e => console.log(e))
 
-  // interview.bio.push({
-  //   name: `${interview.firstName}${interview.bio.length > 0 ? '-' + interview.bio.length.toString() : ''}`,
-  //   path: `${filepath}/${interview.interviewId}${interview.bio.length > 0 ? '-' + interview.bio.length.toString() : ''}.pdf`
-  // })
-
-  // interview.bio.push({
-  //   name: `${interview.firstName}${interview.bio.length > 0 ? '-' + interview.bio.length.toString() : ''}`,
-  //   path: `${filepath}/${interview.interviewId}${interview.bio.length > 0 ? '-' + interview.bio.length.toString() : ''}.pdf`
-  // })
-
-  // const decode = Buffer.from(file, 'base64').toString('utf-8')
-  // console.log('\n---DECODED-----', decode)
-
-  // const result: Interview = {
-  //   ...interview,
-  //   comments: JSON.parse(interview.comments),
-  //   toStore: JSON.parse(interview.toStore),
-  //   bio: {
-  //     name: `${interview.firstName}${interview.bio.length > 0 ? '-' + interview.bio.length.toString() : ''}`,
-  //     path: `${filepath}/${interview.interviewId}${interview.bio.length > 0 ? '-' + interview.bio.length.toString() : ''}.pdf`
-  //   }
-  // }
-  // console.log(result)
   return {
     name: `${interview.firstName}`,
     path: `${filepath}/${interview.interviewId}.pdf`
