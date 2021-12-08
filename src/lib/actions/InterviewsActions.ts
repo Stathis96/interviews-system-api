@@ -25,7 +25,8 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore)
+      toStore: JSON.parse(interview.toStore),
+      bio: interview.bio ? JSON.parse(interview.bio) : undefined
     }
   })
 
@@ -39,7 +40,8 @@ export async function getInterviewsAction (connection: Knex): Promise<Interview[
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore)
+      toStore: JSON.parse(interview.toStore),
+      bio: JSON.parse(interview.bio)
     }
   })
   return prepared
@@ -53,7 +55,8 @@ export async function getInterviewAction (id: string, connection: Knex): Promise
   const result: Interview = {
     ...interview,
     comments: JSON.parse(interview.comments),
-    toStore: JSON.parse(interview.toStore)
+    toStore: JSON.parse(interview.toStore),
+    bio: JSON.parse(interview.bio)
   }
   return result
 }
@@ -65,7 +68,8 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
     return {
       ...interview,
       comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore)
+      toStore: JSON.parse(interview.toStore),
+      bio: JSON.parse(interview.bio)
     }
   })
   return interviewsWithNull
@@ -74,15 +78,7 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
 export async function createInterviewAction (data: InterviewInputData, connection: Knex): Promise<Interview> {
   const id = v4()
   let bio: PdfFile = { name: '', path: '' }
-  console.log('show data.bio', data.bio)
-  if (data.bio !== undefined) {
-    console.log('mpika sto if, des to data.bio', data.bio)
-    for (const attachedFile of data.bio) {
-      bio = await uploadFileAction(id, attachedFile, connection)
-      console.log('after uploading', bio)
-    }
-  }
-  console.log('des to bio ', bio)
+  // console.log('show data.bio', data.bio)
 
   await connection('interviews')
     .insert({
@@ -90,8 +86,16 @@ export async function createInterviewAction (data: InterviewInputData, connectio
       ...data,
       comments: JSON.stringify(data.comments), // stringify
       toStore: JSON.stringify(data.toStore), // stringify
-      bio: bio
+      bio: JSON.stringify(bio)
     })
+
+  if (data.bio !== undefined) {
+    console.log('mpika sto if, des to data.bio', data.bio)
+    // const attachedFile = data.bio
+    // for (const attachedFile of data.bio) {
+    bio = await uploadFileAction(id, data.bio, connection)
+    console.log('after uploading', bio)
+  }
 
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) {
@@ -110,9 +114,8 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
   let bio: PdfFile = { name: '', path: '' }
 
   if (data.bio) {
-    for (const attachedFile of data.bio) {
-      bio = await uploadFileAction(id, attachedFile, connection)
-    }
+    // for (const attachedFile of data.bio) {
+    bio = await uploadFileAction(id, data.bio, connection)
   }
   console.log('des to bio ', bio)
 
@@ -120,7 +123,7 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
     ...data,
     comments: JSON.stringify(data.comments), // stringify
     toStore: JSON.stringify(data.toStore), // stringify
-    bio: bio
+    bio: JSON.stringify(bio)
   })
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) {
