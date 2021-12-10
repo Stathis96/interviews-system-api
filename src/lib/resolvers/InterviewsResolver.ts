@@ -9,11 +9,8 @@ import { Interview } from 'src/types/entities/Interview'
 import { createInterviewAction, deleteInterviewAction, getInterviewAction, getInterviewsAction, getNullResults, getPaginatedInterviewsAction, updateInterviewAction } from '../actions/InterviewsActions'
 import { PaginationInputData } from 'src/types/classes/PaginationInputData'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
-
-// import { GraphQLUpload } from 'graphql-upload'
-// import { createWriteStream } from 'fs'
-
-// import { Upload } from '../../types/Upload'
+import { PdfFile } from 'src/types/entities/PdfFile'
+import { downloadFileAction } from '../actions/FileActions'
 
 @Resolver()
 export class InterviewsResolver {
@@ -45,6 +42,15 @@ export class InterviewsResolver {
       @Arg('id') id: string
   ): Promise <Interview> {
     return await getInterviewAction(id, knex)
+  }
+
+  @Query(() => String)
+  async downloadFile (
+    @Ctx('knex') knex: Knex,
+      @Arg('id') id: string,
+      @Arg('file', () => PdfFile) file: PdfFile
+  ): Promise<string> {
+    return await downloadFileAction(id, file, knex)
   }
 
   @Mutation(() => Interview)
