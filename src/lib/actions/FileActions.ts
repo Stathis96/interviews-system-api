@@ -27,3 +27,30 @@ export async function uploadFileAction (id: string, file: string, connection: Kn
     path: `${filepath}/${interview.interviewId}.pdf`
   }
 }
+
+export async function downloadFileAction (id: string, file: PdfFile, connection: Knex): Promise<string> {
+  const interview = await connection('interviews').where('interviewId', id).first()
+  if (interview === undefined) throw new UserInputError('INVALID_INTERVIEW_ID')
+
+  console.log(interview.bio)
+  const position = interview.bio.search('utils')
+  const sliced = interview.bio.slice(position)
+  const result = sliced.slice(0, -2)
+  // result.replace('\\', '/')
+  console.log('result ', result)
+  console.log('file path', file.path)
+
+  if (result !== file.path) console.log('not equal')
+  //  throw new Error('Cant find file')
+  // const bio: PdfFile = interview.bio as unknown as PdfFile
+  // if (bio.path !== file.path) throw new Error('Cant find file')
+  // if (interview.bio !== file.path) throw new Error('Cant find file')
+  const encodedFile = await fsPromise.readFile(
+    file.path,
+    { encoding: 'base64' }
+  ).catch(err => {
+    throw new UserInputError(err.message)
+  })
+  // console.log('this is what i send back', encodedFile)
+  return encodedFile
+}

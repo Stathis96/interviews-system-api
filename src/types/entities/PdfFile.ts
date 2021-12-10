@@ -1,6 +1,6 @@
-import { Field, ObjectType } from 'type-graphql'
+import { Field, InputType } from 'type-graphql'
 
-@ObjectType()
+@InputType()
 export class PdfFile {
   @Field()
   name: string
