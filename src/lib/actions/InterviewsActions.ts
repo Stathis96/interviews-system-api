@@ -89,13 +89,17 @@ export async function createInterviewAction (data: InterviewInputData, connectio
       bio: JSON.stringify(bio)
     })
 
-  if (data.bio !== undefined) {
-    console.log('mpika sto if, des to data.bio', data.bio)
-    // const attachedFile = data.bio
+  if (data.bio) {
     // for (const attachedFile of data.bio) {
     bio = await uploadFileAction(id, data.bio, connection)
-    console.log('after uploading', bio)
   }
+
+  await connection('interviews').where('interviewId', id).update({ // REPEATing the writing to the database in order to update pdf file if exists
+    ...data,
+    comments: JSON.stringify(data.comments), // stringify
+    toStore: JSON.stringify(data.toStore), // stringify
+    bio: JSON.stringify(bio)
+  })
 
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) {
@@ -117,7 +121,7 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
     // for (const attachedFile of data.bio) {
     bio = await uploadFileAction(id, data.bio, connection)
   }
-  console.log('des to bio ', bio)
+  // console.log('des to bio ', bio)
 
   await connection('interviews').where('interviewId', id).update({
     ...data,

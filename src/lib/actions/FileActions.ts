@@ -32,25 +32,37 @@ export async function downloadFileAction (id: string, file: PdfFile, connection:
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) throw new UserInputError('INVALID_INTERVIEW_ID')
 
-  console.log(interview.bio)
   const position = interview.bio.search('utils')
-  const sliced = interview.bio.slice(position)
+  const sliced = interview.bio.slice(position + 7) // check for path validation
   const result = sliced.slice(0, -2)
-  // result.replace('\\', '/')
-  console.log('result ', result)
-  console.log('file path', file.path)
 
-  if (result !== file.path) console.log('not equal')
-  //  throw new Error('Cant find file')
-  // const bio: PdfFile = interview.bio as unknown as PdfFile
-  // if (bio.path !== file.path) throw new Error('Cant find file')
-  // if (interview.bio !== file.path) throw new Error('Cant find file')
+  const filePosition = file.path.search('utils')
+  const filesliced = file.path.slice(filePosition + 6) // check for path validation
+
+  if (result !== filesliced) throw new Error('Cant find file')
+
+  console.log('success')
   const encodedFile = await fsPromise.readFile(
     file.path,
     { encoding: 'base64' }
   ).catch(err => {
     throw new UserInputError(err.message)
   })
-  // console.log('this is what i send back', encodedFile)
   return encodedFile
+}
+
+export async function deleteFileAction (file: PdfFile): Promise<boolean> {
+  if (file?.path !== undefined) {
+    console.log('entered file deletion time')
+    fsPromise.unlink(file?.path)
+      .then((res: any) => {
+        console.log('Successfuly delted filepath', res)
+        return true
+      })
+      .catch((err: any) => {
+        console.log('Not deleted', err)
+        return false
+      })
+  }
+  return true
 }
