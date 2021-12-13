@@ -10,7 +10,7 @@ import { createInterviewAction, deleteInterviewAction, getInterviewAction, getIn
 import { PaginationInputData } from 'src/types/classes/PaginationInputData'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
 import { PdfFile } from 'src/types/entities/PdfFile'
-import { downloadFileAction } from '../actions/FileActions'
+import { deleteFileAction, downloadFileAction } from '../actions/FileActions'
 
 @Resolver()
 export class InterviewsResolver {
@@ -77,8 +77,14 @@ export class InterviewsResolver {
   ): Promise<boolean> {
     return await deleteInterviewAction(id, knex)
   }
-}
 
+  @Mutation(() => Boolean)
+  async deleteFile (
+    @Arg('file', () => PdfFile) file: PdfFile
+  ): Promise<boolean> {
+    return await deleteFileAction(file)
+  }
+}
 // @Resolver()
 // export class ProfilePictureResolver {
 //   @Mutation(() => Boolean)
