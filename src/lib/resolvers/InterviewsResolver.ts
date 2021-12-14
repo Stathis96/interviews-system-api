@@ -17,9 +17,10 @@ export class InterviewsResolver {
   @Query(() => PaginatedInterviews)
   async getPaginatedInterviews (
     @Ctx('knex') knex: Knex,
-      @Arg('data', () => PaginationInputData) data: PaginationInputData
+      @Arg('data', () => PaginationInputData) data: PaginationInputData,
+      @Arg('status', () => String, { nullable: true }) status?: string
   ): Promise<PaginatedInterviews> {
-    return await getPaginatedInterviewsAction(data, knex)
+    return await getPaginatedInterviewsAction(data, knex, status)
   }
 
   @Query(() => [Interview])
