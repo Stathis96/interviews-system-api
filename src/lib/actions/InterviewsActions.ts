@@ -9,28 +9,56 @@ import { PdfFile } from 'src/types/entities/PdfFile'
 import { v4 } from 'uuid'
 import { uploadFileAction } from './FileActions'
 
-export async function getPaginatedInterviewsAction (data: PaginationInputData, connection: Knex): Promise<PaginatedInterviews> {
-  const offset = (data.page - 1) * data.limit
-  if (data.filter === undefined) data.filter = ''
-  const numberOfInterviews = await connection('interviews').count({ count: '*' })
+export async function getPaginatedInterviewsAction (data: PaginationInputData, connection: Knex, status?: string): Promise<PaginatedInterviews> {
+  if (status === undefined) {
+    const offset = (data.page - 1) * data.limit
+    if (data.filter === undefined) data.filter = ''
+    const numberOfInterviews = await connection('interviews').count({ count: '*' })
+    console.log('number of interviews', numberOfInterviews[0].count)
 
-  const interviews = await connection('interviews').limit(data.limit).offset(offset)
-    .where('firstName', 'like', `%${(data.filter)}%`)
-    .orWhere('lastName', 'like', `%${(data.filter)}%`)
-    .orWhere('toStore', 'like', `%${(data.filter)}%`)
-    .orWhere('comments', 'like', `%${(data.filter)}%`)
-    .orWhere('result', 'like', `%${(data.filter)}%`)
+    const interviews = await connection('interviews').limit(data.limit).offset(offset)
+      .where('firstName', 'like', `%${(data.filter)}%`)
+      .orWhere('lastName', 'like', `%${(data.filter)}%`)
+      .orWhere('toStore', 'like', `%${(data.filter)}%`)
+      .orWhere('comments', 'like', `%${(data.filter)}%`)
+      .orWhere('result', 'like', `%${(data.filter)}%`)
 
-  const prepared = interviews.map(interview => {
-    return {
-      ...interview,
-      comments: JSON.parse(interview.comments),
-      toStore: JSON.parse(interview.toStore),
-      bio: interview.bio ? JSON.parse(interview.bio) : undefined
-    }
-  })
+    const prepared = interviews.map(interview => {
+      return {
+        ...interview,
+        comments: JSON.parse(interview.comments),
+        toStore: JSON.parse(interview.toStore),
+        bio: interview.bio ? JSON.parse(interview.bio) : undefined
+      }
+    })
+    console.log('status undefined')
+    return { context: prepared, total: numberOfInterviews[0].count as number, offset }
+  } else {
+    const offset = (data.page - 1) * data.limit
+    if (data.filter === undefined) data.filter = ''
+    const numberOfInterviews = await connection('interviews').count({ count: '*' })
+      .whereNull('result')
+    console.log('number of interviews', numberOfInterviews[0].count)
 
-  return { context: prepared, total: numberOfInterviews[0].count as number, offset }
+    const interviews = await connection('interviews').limit(data.limit).offset(offset)
+      .where('result', null)
+      // .andWhere({'lastName', 'like', `%${(data.filter)}%`  })
+      // .orWhere('lastName', 'like', `%${(data.filter)}%`)
+      // .orWhere('toStore', 'like', `%${(data.filter)}%`)
+      // .orWhere('comments', 'like', `%${(data.filter)}%`)
+
+    const prepared = interviews.map(interview => {
+      return {
+        ...interview,
+        comments: JSON.parse(interview.comments),
+        toStore: JSON.parse(interview.toStore),
+        bio: interview.bio ? JSON.parse(interview.bio) : undefined
+      }
+    })
+    console.log('status defined')
+
+    return { context: prepared, total: numberOfInterviews[0].count as number, offset }
+  }
 }
 
 export async function getInterviewsAction (connection: Knex): Promise<Interview[]> {
