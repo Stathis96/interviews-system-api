@@ -104,6 +104,9 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
 }
 
 export async function createInterviewAction (data: InterviewInputData, connection: Knex): Promise<Interview> {
+  if (data.firstName === '' || data.lastName === '' || data.city === '' || data.area === '') {
+    throw new UserInputError('Action Failed! Candidate can not have empty value for his Firstname/Lastname/City/Area')
+  }
   const id = v4()
   let bio: PdfFile = { name: '', path: '' }
   // console.log('show data.bio', data.bio)
@@ -144,23 +147,35 @@ export async function createInterviewAction (data: InterviewInputData, connectio
 
 export async function updateInterviewAction (id: string, data: InterviewInputData, connection: Knex): Promise<Interview> {
   let bio: PdfFile = { name: '', path: '' }
-
+  console.log('show what i send', data)
   if (data.bio) {
-    // for (const attachedFile of data.bio) {
-    bio = await uploadFileAction(id, data.bio, connection)
+    if (data.bio !== '') {
+      // for (const attachedFile of data.bio) {
+      bio = await uploadFileAction(id, data.bio, connection)
+      console.log('mpike')
+    }
   }
-  // console.log('des to bio ', bio)
 
-  await connection('interviews').where('interviewId', id).update({
-    ...data,
-    comments: JSON.stringify(data.comments), // stringify
-    toStore: JSON.stringify(data.toStore), // stringify
-    bio: JSON.stringify(bio)
-  })
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) {
     throw new Error('Interview not found')
   }
+  if (bio.name === '') {
+    await connection('interviews').where('interviewId', id).update({
+      ...data,
+      comments: JSON.stringify(data.comments), // stringify
+      toStore: JSON.stringify(data.toStore), // stringify
+      bio: interview?.bio
+    })
+  } else {
+    await connection('interviews').where('interviewId', id).update({
+      ...data,
+      comments: JSON.stringify(data.comments), // stringify
+      toStore: JSON.stringify(data.toStore), // stringify
+      bio: JSON.stringify(bio)
+    })
+  }
+
   return {
     ...interview,
     comments: JSON.parse(interview.comments),
