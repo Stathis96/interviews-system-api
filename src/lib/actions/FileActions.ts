@@ -64,5 +64,5 @@ export async function deleteFileAction (file: PdfFile): Promise<boolean> {
         return false
       })
   }
-  return true
+  return false
 }

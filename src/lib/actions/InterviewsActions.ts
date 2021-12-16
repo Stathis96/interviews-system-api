@@ -7,7 +7,7 @@ import { Interview } from 'src/types/entities/Interview'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
 import { PdfFile } from 'src/types/entities/PdfFile'
 import { v4 } from 'uuid'
-import { uploadFileAction } from './FileActions'
+import { deleteFileAction, uploadFileAction } from './FileActions'
 
 export async function getPaginatedInterviewsAction (data: PaginationInputData, connection: Knex, status?: string): Promise<PaginatedInterviews> {
   if (status === undefined) {
@@ -42,10 +42,13 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
 
     const interviews = await connection('interviews').limit(data.limit).offset(offset)
       .where('result', null)
-      // .andWhere({'lastName', 'like', `%${(data.filter)}%`  })
-      // .orWhere('lastName', 'like', `%${(data.filter)}%`)
-      // .orWhere('toStore', 'like', `%${(data.filter)}%`)
-      // .orWhere('comments', 'like', `%${(data.filter)}%`)
+      .andWhere((bd) => {
+        bd.from('interviews').where('firstName', 'like', `%${(data.filter)}%`)
+          .orWhere('lastName', 'like', `%${(data.filter)}%`)
+          .orWhere('toStore', 'like', `%${(data.filter)}%`)
+          .orWhere('comments', 'like', `%${(data.filter)}%`)
+          .catch(e => console.log(e))
+      })
 
     const prepared = interviews.map(interview => {
       return {
@@ -105,7 +108,12 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
 
 export async function createInterviewAction (data: InterviewInputData, connection: Knex): Promise<Interview> {
   if (data.firstName === '' || data.lastName === '' || data.city === '' || data.area === '') {
-    throw new UserInputError('Action Failed! Candidate can not have empty value for his Firstname/Lastname/City/Area')
+    throw new UserInputError('Action Failed! Candidate can not have empty value for any of his Firstname/Lastname/City/Area')
+  }
+  if (!data.vaccinated) {
+    if (data.doses > 0) {
+      throw new UserInputError('Candidate must be vaccinated in order to have at least one dose of the vaccine')
+    }
   }
   const id = v4()
   let bio: PdfFile = { name: '', path: '' }
@@ -146,21 +154,31 @@ export async function createInterviewAction (data: InterviewInputData, connectio
 }
 
 export async function updateInterviewAction (id: string, data: InterviewInputData, connection: Knex): Promise<Interview> {
+  if (data.firstName === '' || data.lastName === '' || data.city === '' || data.area === '') {
+    throw new UserInputError('Action Failed! Candidate can not have empty value for any of his Firstname/Lastname/City/Area')
+  }
+  if (!data.vaccinated) {
+    if (data.doses > 0) {
+      throw new UserInputError('Candidate must be vaccinated in order to have at least one dose of the vaccine')
+    }
+  }
+
   let bio: PdfFile = { name: '', path: '' }
-  console.log('show what i send', data)
+  // console.log('show what i send', data)
   if (data.bio) {
-    if (data.bio !== '') {
-      // for (const attachedFile of data.bio) {
+    if (data.bio !== '' && data.bio !== 'deleted') {
+    // for (const attachedFile of data.bio) {
       bio = await uploadFileAction(id, data.bio, connection)
       console.log('mpike')
     }
   }
-
+  console.log('DATA BIO', data.bio, 'BIO NAME', bio.name)
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) {
     throw new Error('Interview not found')
   }
-  if (bio.name === '') {
+  if (bio.name === '' && data.bio !== 'deleted') {
+    // console.log('show me the bio', bio)
     await connection('interviews').where('interviewId', id).update({
       ...data,
       comments: JSON.stringify(data.comments), // stringify
@@ -185,7 +203,11 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
 }
 
 export async function deleteInterviewAction (id: string, connection: Knex): Promise<boolean> {
-  const interview = await connection('interviews').where('interviewId', id).delete()
+  const interview = await connection('interviews').where('interviewId', id).first()
+  if (interview?.bio !== undefined) {
+    await deleteFileAction((JSON.parse(interview?.bio))) // deleting pdf file within interview if exists
+  }
+  await connection('interviews').where('interviewId', id).delete()
   if (interview) return true
   return false
 }
