@@ -1,6 +1,5 @@
 import { Knex } from 'knex'
 import { UserInputError } from 'apollo-server-errors'
-// import { Interview } from 'src/types/entities/Interview'
 import path from 'path'
 import fsPromise from 'fs/promises'
 import { PdfFile } from 'src/types/entities/PdfFile'
@@ -59,7 +58,7 @@ export async function deleteFileAction (file: PdfFile): Promise<boolean> {
         console.log('Successfuly delted filepath', res)
         return true
       })
-      .catch((err: any) => {
+      .catch((err: string) => {
         console.log('Not deleted', err)
         return false
       })

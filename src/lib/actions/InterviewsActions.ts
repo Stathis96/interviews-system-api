@@ -14,7 +14,6 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
     const offset = (data.page - 1) * data.limit
     if (data.filter === undefined) data.filter = ''
     const numberOfInterviews = await connection('interviews').count({ count: '*' })
-    console.log('number of interviews', numberOfInterviews[0].count)
 
     const interviews = await connection('interviews').limit(data.limit).offset(offset)
       .where('firstName', 'like', `%${(data.filter)}%`)
@@ -31,14 +30,12 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
         bio: interview.bio ? JSON.parse(interview.bio) : undefined
       }
     })
-    console.log('status undefined')
     return { context: prepared, total: numberOfInterviews[0].count as number, offset }
   } else {
     const offset = (data.page - 1) * data.limit
     if (data.filter === undefined) data.filter = ''
     const numberOfInterviews = await connection('interviews').count({ count: '*' })
       .whereNull('result')
-    console.log('number of interviews', numberOfInterviews[0].count)
 
     const interviews = await connection('interviews').limit(data.limit).offset(offset)
       .where('result', null)
@@ -58,7 +55,6 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
         bio: interview.bio ? JSON.parse(interview.bio) : undefined
       }
     })
-    console.log('status defined')
 
     return { context: prepared, total: numberOfInterviews[0].count as number, offset }
   }
@@ -117,7 +113,6 @@ export async function createInterviewAction (data: InterviewInputData, connectio
   }
   const id = v4()
   let bio: PdfFile = { name: '', path: '' }
-  // console.log('show data.bio', data.bio)
 
   await connection('interviews')
     .insert({
@@ -164,7 +159,6 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
   }
 
   let bio: PdfFile = { name: '', path: '' }
-  // console.log('show what i send', data)
   if (data.bio) {
     if (data.bio !== '' && data.bio !== 'deleted') {
     // for (const attachedFile of data.bio) {
@@ -172,13 +166,11 @@ export async function updateInterviewAction (id: string, data: InterviewInputDat
       console.log('mpike')
     }
   }
-  console.log('DATA BIO', data.bio, 'BIO NAME', bio.name)
   const interview = await connection('interviews').where('interviewId', id).first()
   if (interview === undefined) {
     throw new Error('Interview not found')
   }
   if (bio.name === '' && data.bio !== 'deleted') {
-    // console.log('show me the bio', bio)
     await connection('interviews').where('interviewId', id).update({
       ...data,
       comments: JSON.stringify(data.comments), // stringify
