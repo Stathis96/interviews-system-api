@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import Debug from 'debug'
-dotenv.config()
+dotenv.config({ path: `.env${process.env.NODE_ENV !== undefined ? '.' + process.env.NODE_ENV : ''}` })
 
 export const ENVIRONMENT = process.env.NODE_ENV as string || 'development'
 
