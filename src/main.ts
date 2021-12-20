@@ -51,7 +51,7 @@ async function main (): Promise<void> {
   app.use(apolloServer.getMiddleware({ cors: false }))
 
   const httpServer = createServer(app.callback())
-
+  console.log('=====', ENVIRONMENT, '======')
   httpServer.listen({ port: PORT }, () => {
     console.log(`http://${HOST}:${PORT}/graphql`)
   })

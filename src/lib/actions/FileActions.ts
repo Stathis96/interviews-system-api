@@ -1,7 +1,8 @@
 import { Knex } from 'knex'
-import { UserInputError } from 'apollo-server-errors'
 import path from 'path'
 import fsPromise from 'fs/promises'
+import { UserInputError } from 'apollo-server-errors'
+
 import { PdfFile } from 'src/types/entities/PdfFile'
 
 export async function uploadFileAction (id: string, file: string, connection: Knex): Promise<PdfFile> {

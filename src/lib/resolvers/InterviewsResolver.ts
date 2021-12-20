@@ -4,12 +4,15 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Ctx, Arg, Query, Resolver, Mutation } from 'type-graphql'
 import { Knex } from 'knex'
+
 import { InterviewInputData } from 'src/types/classes/InterviewInputData'
-import { Interview } from 'src/types/entities/Interview'
-import { createInterviewAction, deleteInterviewAction, getInterviewAction, getInterviewsAction, getNullResults, getPaginatedInterviewsAction, updateInterviewAction } from '../actions/InterviewsActions'
 import { PaginationInputData } from 'src/types/classes/PaginationInputData'
-import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
+
+import { Interview } from 'src/types/entities/Interview'
 import { PdfFile } from 'src/types/entities/PdfFile'
+import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
+
+import { createInterviewAction, deleteInterviewAction, getInterviewAction, getInterviewsAction, getNullResults, getPaginatedInterviewsAction, updateInterviewAction } from '../actions/InterviewsActions'
 import { deleteFileAction, downloadFileAction } from '../actions/FileActions'
 
 @Resolver()

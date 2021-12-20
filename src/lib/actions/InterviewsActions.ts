@@ -1,12 +1,15 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { UserInputError } from 'apollo-server-errors'
 import { Knex } from 'knex'
-import { InterviewInputData } from 'src/types/classes/InterviewInputData'
+import { UserInputError } from 'apollo-server-errors'
+import { v4 } from 'uuid'
+
 import { PaginationInputData } from 'src/types/classes/PaginationInputData'
+import { InterviewInputData } from 'src/types/classes/InterviewInputData'
+
 import { Interview } from 'src/types/entities/Interview'
 import { PaginatedInterviews } from 'src/types/entities/PaginatedInterviews'
 import { PdfFile } from 'src/types/entities/PdfFile'
-import { v4 } from 'uuid'
+
 import { deleteFileAction, uploadFileAction } from './FileActions'
 
 export async function getPaginatedInterviewsAction (data: PaginationInputData, connection: Knex, status?: string): Promise<PaginatedInterviews> {
