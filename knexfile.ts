@@ -1,6 +1,6 @@
 // Update with your config settings.
 
-module.exports = {
+export default {
 
   development: {
     client: "mysql",
@@ -16,36 +16,31 @@ module.exports = {
     }    
   },
 
-  staging: {
-    client: "postgresql",
+  test: {
+    client: "mysql",
     connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
-    },
-    pool: {
-      min: 2,
-      max: 10
+      host : '127.0.0.1',
+      user: "root",
+      password : '',
+      database: 'test'
     },
     migrations: {
-      tableName: "knex_migrations"
-    }
+      extension: 'ts'
+    } 
   },
 
   production: {
-    client: "postgresql",
+    client: "mysql",
     connection: {
-      database: "my_db",
-      user: "username",
-      password: "password"
-    },
-    pool: {
-      min: 2,
-      max: 10
+      host : '127.0.0.1',
+      user : 'root',
+      password : '',
+      database : 'interviews-system',
+      charset: 'utf8'
     },
     migrations: {
-      tableName: "knex_migrations"
-    }
+      extension: 'ts'
+    } 
   }
 
 };

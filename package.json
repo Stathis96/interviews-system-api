@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register ./src/main.ts",
     "dev": "ts-node-dev -r tsconfig-paths/register ./src/main.ts",
-    "test": "jest --runInBand"
+    "test": "cross-env NODE_ENV=test npm run migrate && jest --forceExit --detectOpenHandles --runInBand",
+    "migrate": "knex migrate:up"
   },
   "author": "Stathis Ioannidis",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "@types/uuid": "^8.3.1",
     "apollo-server-koa": "^3.5.0",
     "class-validator": "^0.13.1",
+    "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "graphql": "^15.7.2",
     "graphql-tag": "^2.12.6",
