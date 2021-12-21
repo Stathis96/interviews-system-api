@@ -20,6 +20,7 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
 
     const interviews = await connection('interviews').limit(data.limit).offset(offset)
       .where('firstName', 'like', `%${(data.filter)}%`)
+      .orWhere('mobile', 'like', `%${(data.filter)}%`)
       .orWhere('lastName', 'like', `%${(data.filter)}%`)
       .orWhere('toStore', 'like', `%${(data.filter)}%`)
       .orWhere('comments', 'like', `%${(data.filter)}%`)
@@ -34,6 +35,36 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
       }
     })
     return { context: prepared, total: numberOfInterviews[0].count as number, offset }
+  } else if (status === 'pending') {
+    console.log('mpika sta pendings')
+    const offset = (data.page - 1) * data.limit
+    if (data.filter === undefined) data.filter = ''
+    const numberOfInterviews = await connection('interviews').count({ count: '*' })
+      .where('date', '>=', new Date())
+    console.log('this is the date now', new Date())
+    console.log('number of interview found', numberOfInterviews)
+
+    const interviews = await connection('interviews').limit(data.limit).offset(offset)
+      .where('date', '>=', new Date())
+      .andWhere((bd) => {
+        bd.from('interviews').where('firstName', 'like', `%${(data.filter)}%`)
+          .orWhere('lastName', 'like', `%${(data.filter)}%`)
+          .orWhere('mobile', 'like', `%${(data.filter)}%`)
+          .orWhere('toStore', 'like', `%${(data.filter)}%`)
+          .orWhere('comments', 'like', `%${(data.filter)}%`)
+          .catch(e => console.log(e))
+      })
+
+    const prepared = interviews.map(interview => {
+      return {
+        ...interview,
+        comments: JSON.parse(interview.comments),
+        toStore: JSON.parse(interview.toStore),
+        bio: interview.bio ? JSON.parse(interview.bio) : undefined
+      }
+    })
+
+    return { context: prepared, total: numberOfInterviews[0].count as number, offset }
   } else {
     const offset = (data.page - 1) * data.limit
     if (data.filter === undefined) data.filter = ''
@@ -45,6 +76,7 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
       .andWhere((bd) => {
         bd.from('interviews').where('firstName', 'like', `%${(data.filter)}%`)
           .orWhere('lastName', 'like', `%${(data.filter)}%`)
+          .orWhere('mobile', 'like', `%${(data.filter)}%`)
           .orWhere('toStore', 'like', `%${(data.filter)}%`)
           .orWhere('comments', 'like', `%${(data.filter)}%`)
           .catch(e => console.log(e))
@@ -106,9 +138,9 @@ export async function getNullResults (connection: Knex): Promise<Interview[]> {
 }
 
 export async function createInterviewAction (data: InterviewInputData, connection: Knex): Promise<Interview> {
-  if (data.firstName === '' || data.lastName === '' || data.city === '' || data.area === '') {
-    throw new UserInputError('Action Failed! Candidate can not have empty value for any of his Firstname/Lastname/City/Area')
-  }
+  // if (data.firstName === '' || data.lastName === '' || data.city === '' || data.area === '') {
+  //   throw new UserInputError('Action Failed! Candidate can not have empty value for any of his Firstname/Lastname/City/Area')
+  // }
   if (!data.vaccinated) {
     if (data.doses > 0) {
       throw new UserInputError('Candidate must be vaccinated in order to have at least one dose of the vaccine')
@@ -152,9 +184,9 @@ export async function createInterviewAction (data: InterviewInputData, connectio
 }
 
 export async function updateInterviewAction (id: string, data: InterviewInputData, connection: Knex): Promise<Interview> {
-  if (data.firstName === '' || data.lastName === '' || data.city === '' || data.area === '') {
-    throw new UserInputError('Action Failed! Candidate can not have empty value for any of his Firstname/Lastname/City/Area')
-  }
+  // if (data.firstName === '' || data.lastName === '' || data.city === '' || data.area === '') {
+  //   throw new UserInputError('Action Failed! Candidate can not have empty value for any of his Firstname/Lastname/City/Area')
+  // }
   if (!data.vaccinated) {
     if (data.doses > 0) {
       throw new UserInputError('Candidate must be vaccinated in order to have at least one dose of the vaccine')

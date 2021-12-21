@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsInt, IsString, Length, Max, Min } from 'class-validator'
+import { IsBoolean, IsDate, IsInt, IsString } from 'class-validator'
 import { Field, InputType } from 'type-graphql'
 
 @InputType()
@@ -24,13 +24,13 @@ export class InterviewInputData {
   lastName: string
 
   @Field()
-  @Length(1, 13)
+  // @Length(1, 13)
   @IsString()
   mobile: string
 
   @Field()
   @IsInt()
-  @Min(15)
+  // @Min(15)
   age: number
 
   @Field()
@@ -51,14 +51,14 @@ export class InterviewInputData {
 
   @Field()
   @IsInt()
-  @Min(0)
-  @Max(2)
+  // @Min(0)
+  // @Max(2)
   doses: number
 
   @Field()
   @IsInt()
-  @Min(1)
-  @Max(7)
+  // @Min(1)
+  // @Max(7)
   shifts: number
 
   @Field(() => [String], { nullable: true })
