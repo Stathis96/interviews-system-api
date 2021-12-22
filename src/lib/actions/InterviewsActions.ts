@@ -41,8 +41,6 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
     if (data.filter === undefined) data.filter = ''
     const numberOfInterviews = await connection('interviews').count({ count: '*' })
       .where('date', '>=', new Date())
-    console.log('this is the date now', new Date())
-    console.log('number of interview found', numberOfInterviews)
 
     const interviews = await connection('interviews').limit(data.limit).offset(offset)
       .where('date', '>=', new Date())
