@@ -63,6 +63,33 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
     })
 
     return { context: prepared, total: numberOfInterviews[0].count as number, offset }
+  } else if (status === 'standby') {
+    const offset = (data.page - 1) * data.limit
+    if (data.filter === undefined) data.filter = ''
+    const numberOfInterviews = await connection('interviews').count({ count: '*' })
+      .whereNull('result')
+
+    const interviews = await connection('interviews').limit(data.limit).offset(offset)
+      .where('result', null)
+      .andWhere((bd) => {
+        bd.from('interviews').where('firstName', 'like', `%${(data.filter)}%`)
+          .orWhere('lastName', 'like', `%${(data.filter)}%`)
+          .orWhere('mobile', 'like', `%${(data.filter)}%`)
+          .orWhere('toStore', 'like', `%${(data.filter)}%`)
+          .orWhere('comments', 'like', `%${(data.filter)}%`)
+          .catch(e => console.log(e))
+      })
+
+    const prepared = interviews.map(interview => {
+      return {
+        ...interview,
+        comments: JSON.parse(interview.comments),
+        toStore: JSON.parse(interview.toStore),
+        bio: interview.bio ? JSON.parse(interview.bio) : undefined
+      }
+    })
+
+    return { context: prepared, total: numberOfInterviews[0].count as number, offset }
   } else {
     console.log('mpika sto else')
     console.log('what was sent as date', status)
