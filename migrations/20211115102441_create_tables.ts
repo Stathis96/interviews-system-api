@@ -22,6 +22,7 @@ export async function up (knex: Knex): Promise<void> {
       table.string('toStore')
       table.string('result').defaultTo(null)
       table.string('bio')
+      table.boolean('isHired')
     })
 }
 

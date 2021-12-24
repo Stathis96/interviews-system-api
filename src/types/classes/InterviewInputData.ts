@@ -74,4 +74,8 @@ export class InterviewInputData {
   @Field()
   @IsString()
   bio?: string
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  isHired: boolean
 }
