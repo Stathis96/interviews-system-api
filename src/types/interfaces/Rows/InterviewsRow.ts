@@ -24,6 +24,8 @@ export interface InterviewsRow {
 
   vaccinated: boolean
 
+  isHired: boolean
+
   doses: number
 
   shifts: number

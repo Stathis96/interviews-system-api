@@ -59,4 +59,7 @@ export class Interview {
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   bio?: PdfFile
+
+  @Field({ nullable: true })
+  isHired: boolean
 }

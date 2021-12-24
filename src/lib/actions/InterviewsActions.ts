@@ -64,13 +64,20 @@ export async function getPaginatedInterviewsAction (data: PaginationInputData, c
 
     return { context: prepared, total: numberOfInterviews[0].count as number, offset }
   } else {
+    console.log('mpika sto else')
+    console.log('what was sent as date', status)
+    const dates = status.split(',')
     const offset = (data.page - 1) * data.limit
     if (data.filter === undefined) data.filter = ''
+
     const numberOfInterviews = await connection('interviews').count({ count: '*' })
-      .whereNull('result')
+      .where('date', '>=', `${dates[0]}`)
+      .andWhere('date', '<', `${dates[1]}`)
+    console.log('how many interv found', numberOfInterviews)
 
     const interviews = await connection('interviews').limit(data.limit).offset(offset)
-      .where('result', null)
+      .where('date', '>=', `${dates[0]}`)
+      .andWhere('date', '<', `${dates[1]}`)
       .andWhere((bd) => {
         bd.from('interviews').where('firstName', 'like', `%${(data.filter)}%`)
           .orWhere('lastName', 'like', `%${(data.filter)}%`)
